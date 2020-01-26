@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="AzureBlobStorageXF.MainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Padding="0,20,0,0"
+    Visual="Material"
+    mc:Ignorable="d">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="ImageStyle" TargetType="Image">
+                <Setter Property="HeightRequest" Value="400" />
+                <Setter Property="FlexLayout.Basis" Value="90%" />
+            </Style>
+
+            <Style x:Key="ButtonStyle" TargetType="Button">
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="FlexLayout.Basis" Value="42%" />
+                <Setter Property="HeightRequest" Value="70" />
+            </Style>
+
+            <Style x:Key="FlexLayoutStyle" TargetType="FlexLayout">
+                <Setter Property="Direction" Value="Row" />
+                <Setter Property="JustifyContent" Value="SpaceAround" />
+                <Setter Property="Wrap" Value="Wrap" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <FlexLayout Style="{StaticResource FlexLayoutStyle}">
+        <Image x:Name="imgChoosed" Style="{StaticResource ImageStyle}" />
+        <Button
+            x:Name="btnPick"
+            Clicked="BtnPick_Clicked"
+            Style="{StaticResource ButtonStyle}"
+            Text="Pick a photo" />
+        <Button
+            x:Name="btnStore"
+            Clicked="BtnPhoto_Clicked"
+            Style="{StaticResource ButtonStyle}"
+            Text="Take a photo" />
+        <Button
+            x:Name="btnGet"
+            Clicked="BtnDownload_Clicked"
+            Style="{StaticResource ButtonStyle}"
+            Text="Download" />
+        <Button
+            x:Name="btnDelete"
+            Clicked="BtnDelete_Clicked"
+            Style="{StaticResource ButtonStyle}"
+            Text="Delete" />
+    </FlexLayout>
+
+</ContentPage>
