@@ -2,10 +2,11 @@
 {
     using Microsoft.Azure.Storage;
     using Microsoft.Azure.Storage.Blob;
+    using Plugin.Media.Abstractions;
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Threading.Tasks;
-
 
     public static class BlobStorageService
     {
@@ -15,32 +16,67 @@
 
         readonly static CloudBlobContainer blobContainer = blobClient.GetContainerReference(AppSettings.ContainerName);
 
-        public static async Task<string> UploadBlob(Stream file, string extension)
+        public static async Task<string> UploadBlob(MediaFile file, string extension)
         {
             try
             {
-
-                await blobContainer.SetPermissionsAsync(new BlobContainerPermissions
-                {
-                    PublicAccess = BlobContainerPublicAccessType.Blob
-                });
-
-                // await blobContainer.DeleteAsync();
-
                 if (blobContainer != null)
                 {
-                    var fileName = $"{Guid.NewGuid()}{extension}";
+                    string fileName = $"{Guid.NewGuid()}{extension}";
 
-                    var blob = blobContainer.GetBlockBlobReference(fileName);
-                    await blob.UploadFromStreamAsync(file);
+                    CloudBlockBlob blob = blobContainer.GetBlockBlobReference(fileName);
+                    await blob.UploadFromStreamAsync(file.GetStream());
 
-                    return blob.Uri.AbsoluteUri;
+                    return fileName; //return blob.Uri.AbsoluteUri;
                 }
             }
             catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
             return string.Empty;
         }
+
+        public static async Task<bool> DownloadBlob(string fileName)
+        {
+            try
+            {
+                if (blobContainer.ExistsAsync().Result)
+                {
+                    CloudBlockBlob blob = blobContainer.GetBlockBlobReference(fileName);
+
+                    string localPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), fileName);
+
+                    await blob.DownloadToFileAsync(localPath, FileMode.CreateNew);
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public static async Task<bool> DeleteBlob(string fileName)
+        {
+            try
+            {
+                if (blobContainer.ExistsAsync().Result)
+                {
+                    CloudBlockBlob blob = blobContainer.GetBlockBlobReference(fileName);
+                    await blob.DeleteIfExistsAsync();
+
+                    return true;
+                }
+            }
+            catch (Exception ex) 
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
     }
 }

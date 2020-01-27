@@ -1,19 +1,17 @@
 ﻿namespace AzureBlobStorageXF
 {
     using AzureBlobStorageXF.Services;
-    using Microsoft.Azure.Storage.Blob;
     using Plugin.Media;
+    using Plugin.Media.Abstractions;
     using System;
     using System.ComponentModel;
     using System.Diagnostics;
-    using System.IO;
-    using System.Threading.Tasks;
     using Xamarin.Forms;
 
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
-        Stream stream;
+        private string fileName;
 
         public MainPage()
         {
@@ -23,11 +21,12 @@
         private async void BtnPick_Clicked(object sender, EventArgs e)
         {
             await CrossMedia.Current.Initialize();
+
             try
             {
-                var file = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions
+                MediaFile file = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions
                 {
-                    PhotoSize = Plugin.Media.Abstractions.PhotoSize.Medium
+                    PhotoSize = PhotoSize.Medium,
                 });
 
                 if (file == null)  return;
@@ -38,7 +37,7 @@
                     return imageStram;
                 });
 
-                await BlobStorageService.UploadBlob(stream, "jpg");
+                fileName = await BlobStorageService.UploadBlob(file, ".jpg");
             }
             catch (Exception ex)
             {
@@ -48,8 +47,14 @@
 
         private async void BtnPhoto_Clicked(object sender, EventArgs e) { }
 
-        private async void BtnDownload_Clicked(object sender, EventArgs e) { }
+        private async void BtnDownload_Clicked(object sender, EventArgs e) 
+        {
+            bool result = await BlobStorageService.DownloadBlob(fileName);
+        }
 
-        private async void BtnDelete_Clicked(object sender, EventArgs e) { }
+        private async void BtnDelete_Clicked(object sender, EventArgs e) 
+        {
+            bool result = await BlobStorageService.DeleteBlob(fileName);
+        }
     }
 }
