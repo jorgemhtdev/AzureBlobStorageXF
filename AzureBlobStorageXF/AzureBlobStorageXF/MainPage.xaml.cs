@@ -45,7 +45,31 @@
             }
         }
 
-        private async void BtnPhoto_Clicked(object sender, EventArgs e) { }
+        private async void BtnPhoto_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                MediaFile photo = await PhotoService.Instance.TakePhotoAsync();
+
+                if (photo != null)
+                {
+                    imgChoosed.Source = ImageSource.FromStream(() =>
+
+                    {
+                        var imageStram = photo.GetStream();
+                        return imageStram;
+                    });
+
+                    fileName = await BlobStorageService.UploadBlob(photo, ".jpg");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+
+        }
 
         private async void BtnDownload_Clicked(object sender, EventArgs e) 
         {
