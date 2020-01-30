@@ -31,6 +31,7 @@
     </ContentPage.Resources>
     <FlexLayout Style="{StaticResource FlexLayoutStyle}">
         <Image x:Name="imgChoosed" Style="{StaticResource ImageStyle}" />
+        <Label x:Name="url" />
         <Button
             x:Name="btnPick"
             Clicked="BtnPick_Clicked"
